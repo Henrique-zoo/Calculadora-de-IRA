@@ -1,0 +1,2 @@
+1;6;Introducao a Engenharia da Computacao-30-SS,Inteco-60-MS,Calculo 1-90-SS,Fisica 1-60-SS,Fisica 1 Experimental-30-MI,APC-90-SS, Fisica 1 Experimental-30-SS
+2;7;Calculo 2-90-SS,Estrutura de Dados-60-SS,Programacao Competitiva-60-MS,Probabilidade e Estatistica-60-SS,Fisica 2-60-SS,Fisica 2 Experimental-60-SS,Introducao a Algebra Linear-60-SS
