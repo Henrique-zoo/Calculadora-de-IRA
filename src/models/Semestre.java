@@ -6,13 +6,14 @@ public class Semestre {
 
     private int numero;
     private int qtdDeMaterias;
+    private int horas;
     private List<Materia> materias;
 
-    public Semestre(int numero, int qtdDeMaterias, List<Materia> materias) {
+    public Semestre(int numero, int qtdDeMaterias, int horas, List<Materia> materias) {
         this.numero = numero;
         this.qtdDeMaterias = qtdDeMaterias;
+        this.horas = horas;
         this.materias = materias;
-
     }
 
     public int getNumero() {
@@ -38,5 +39,11 @@ public class Semestre {
     }
     public void removeMateria(Materia materia) {
         this.materias.remove(materia);
+    }
+    public int getHoras() {
+        return horas;
+    }
+    public void setHoras(int horas) {
+        this.horas = horas;
     }
 }

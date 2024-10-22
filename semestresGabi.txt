@@ -1,0 +1,8 @@
+1.7.390.
+engenharia e universidade-30-SS-false,
+IEC-30-SS-false,
+f1-60-MS-false,
+fisexp-30-MS-false,
+c1-90-MS-false,
+APC-90-MS-false,
+IAL-60-MS-false

@@ -21,12 +21,13 @@ public class CalculadorDeIRA {
         boolean executando = true;
         while (executando) {
             exibirMenu(semestres);
-            int acao = scanner.nextInt();
+            int op = scanner.nextInt();
             scanner.nextLine();
-            if (semestres.isEmpty() && acao > 2)
-                acao = -1;
+
+            if (semestres.isEmpty() && op > 2)
+                op = -1;
             
-            switch (acao) {
+            switch (op) {
                 case 1:
                     if (semestres.isEmpty())
                         adicionarSemestre(semestres, scanner);
@@ -56,59 +57,69 @@ public class CalculadorDeIRA {
     }
 
     private static void exibirMenu(List<Semestre> semestres) {
-        if (semestres.isEmpty())
+        if (semestres.isEmpty()) {
             System.out.printf("%s\n%s\n%s\n",
             "Escolha uma opção:",
             "\t1. Adicionar semestre",
             "\t2. Sair");
-        else
+        } else {
             System.out.printf("%s\n%s\n%s\n%s\n%s\n",
             "Escolha uma opção:",
             "\t1. Exibir semestres",
             "\t2. Adicionar semestre",
             "\t3. Calcular índices acadêmicos",
             "\t4. Sair");
+        }
     }
 
     private static List<Semestre> lerArquivo() {
-        ArrayList<String> linhas = new ArrayList<>();
+        List<String> linhas = new ArrayList<>();
         List<Semestre> semestres = new ArrayList<>();
+        
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
-            String linhaTemp;
-            StringBuilder line = new StringBuilder();
-            while ((linhaTemp = reader.readLine()) != null) {
-                for (char ch : linhaTemp.toCharArray()) {
+            String linha;
+            StringBuilder builder = new StringBuilder();
+            while ((linha = reader.readLine()) != null) {
+                for (char ch : linha.toCharArray()) {
                     if (ch == ';') {
-                        linhas.add(line.toString());
-                        line.setLength(0);
+                        linhas.add(builder.toString());
+                        builder.setLength(0);
                     } else {
-                        line.append(ch);
+                        builder.append(ch);
                     }
                 }
             }
-            linhas.add(line.toString());
+            if (builder.length() > 0) {
+                linhas.add(builder.toString());
+            } else {
+                return semestres;
+            }
 
-            for (String linha : linhas) {
+            for (String conteudo : linhas) {
                 List<Materia> materias = new ArrayList<>();
-                String[] partes = linha.split("\\.");
-                int numeroDoSemestre = Integer.parseInt(partes[0]);
-                int qtdDeMaterias = Integer.parseInt(partes[1]);
-                String[] materiasString = partes[2].split(",");
-                for (String texto : materiasString) {
-                    String[] materiaString = texto.split("-");
-                    String nome = materiaString[0];
-                    int horas = Integer.parseInt(materiaString[1]);
-                    String mencao = materiaString[2];
-                    boolean eletiva = Boolean.parseBoolean(materiaString[3]);
+                String[] partes = conteudo.split("\\.");
+                int numeroSemestre = Integer.parseInt(partes[0]);
+                int qtdMaterias = Integer.parseInt(partes[1]);
+                int horasTotais = Integer.parseInt(partes[2]);
+                String[] materiasInfo = partes[3].split(",");
+
+                for (String texto : materiasInfo) {
+                    String[] materiaInfo = texto.split("-");
+                    String nome = materiaInfo[0];
+                    int horas = Integer.parseInt(materiaInfo[1]);
+                    String mencao = materiaInfo[2];
+                    boolean eletiva = Boolean.parseBoolean(materiaInfo[3]);
                     Materia materia = new Materia(nome, horas, mencao, eletiva);
                     materias.add(materia);
                 }
-                Semestre semestre = new Semestre(numeroDoSemestre, qtdDeMaterias, materias);
+
+                Semestre semestre = new Semestre(numeroSemestre, qtdMaterias, horasTotais, materias);
                 semestres.add(semestre);
             }
         } catch (IOException e) {
             System.out.println("Erro ao ler o arquivo: " + e.getMessage());
         }
+        
         return semestres;
     }
 
@@ -117,11 +128,11 @@ public class CalculadorDeIRA {
             System.out.printf("\nVocê não cadastrou nenhum semestre aqui!");
         else
             for (Semestre semestre : semestres) {
-                System.out.println("\n" + semestre.getNumero() + "º semestre (" + semestre.getQtdDeMaterias() + " matérias):");
+                System.out.printf("%dº semestre - %d matérias (%d horas):\n", semestre.getNumero(), semestre.getQtdDeMaterias(), semestre.getHoras());
                 System.out.println("-".repeat(85));
                 System.out.printf("%-40s%s%s%s\n",
                     "Nome",
-                    centralizar("Horas",10),
+                    centralizar("Horas", 10),
                     centralizar("Menção", 10),
                     centralizar("Obrigatória/Optativa", 25)
                 );
@@ -139,9 +150,8 @@ public class CalculadorDeIRA {
     }
 
     private static String centralizar(String texto, int larguraCampo) {
-        if (texto.length() >= larguraCampo) {
+        if (texto.length() >= larguraCampo)
             return texto.substring(0, larguraCampo);
-        }
 
         int espacosEsquerda = (larguraCampo - texto.length()) / 2;
         int espacosDireita = larguraCampo - texto.length() - espacosEsquerda;
@@ -152,15 +162,13 @@ public class CalculadorDeIRA {
     private static float calculaIRA(List<Semestre> semestres) {
         float divisor = 0, dividendo = 0;
         for (Semestre semestre : semestres) {
-            int nDoSemestre = semestre.getNumero();
-            if (nDoSemestre > 6)
-                nDoSemestre = 6;
+            int se = Math.min(semestre.getNumero(), 6);
 
             for (Materia materia : semestre.getMaterias()) {
-                float creditos = materia.getHoras() / 15;
-                int pesoDaMencao = converteMencao(materia.getMencao());
-                dividendo += pesoDaMencao * creditos * nDoSemestre;
-                divisor += creditos * nDoSemestre;
+                float cr = materia.getHoras() / 15;
+                int eqMencao = converterMencao(materia.getMencao());
+                dividendo += eqMencao * cr * se;
+                divisor += cr * se;
             }
         }
         return dividendo/divisor;
@@ -172,7 +180,7 @@ public class CalculadorDeIRA {
             for (Materia materia : semestre.getMaterias()) {
                 if (!materia.isEletiva()) {
                     float creditos = materia.getHoras() / 15;
-                    dividendo += creditos * converteMencao(materia.getMencao());
+                    dividendo += creditos * converterMencao(materia.getMencao());
                     divisor += creditos;
                 }
             }
@@ -183,27 +191,33 @@ public class CalculadorDeIRA {
 
     private static List<Semestre> adicionarSemestre(List<Semestre> semestres, Scanner scanner) {
         List<Materia> materias = new ArrayList<>();
-        
+        int horasTotais = 0;
         System.out.println("Esse semestre conta como qual pelo SIGAA? (matérias de verão contam como do semestre anterior)");
         int numero = scanner.nextInt();
         scanner.nextLine();
         System.out.println("Quantas matérias você fez nesse semestre?");
-        int qtdDeMaterias = scanner.nextInt();
+        int qtdMaterias = scanner.nextInt();
         scanner.nextLine();
-        for (int i = 0; i < qtdDeMaterias; i++) {
-            System.out.println("Qual a matéria?");
+        for (int i = 0; i < qtdMaterias; i++) {
+            System.out.println("Qual o nome da matéria?");
             String nome = scanner.nextLine();
-            System.out.println("Quantas Horas " + nome + " tem?");
+
+            System.out.println("Quantas horas a matéria " + nome + " possui?");
             int horas = scanner.nextInt();
+            horasTotais += horas;
             scanner.nextLine();
-            System.out.println("Qual foi a sua menção em " + nome + "?");
+
+            System.out.println("Qual a menção que você recebeu em " + nome + "?");
             String mencao = scanner.nextLine();
-            System.out.println(nome + "é uma matéria eletiva?");
-            boolean obrigatoria = scanner.nextBoolean();
-            Materia materia = new Materia(nome, horas, mencao, obrigatoria);
+
+            System.out.println(nome + " é uma matéria eletiva? (true para eletiva, false para obrigatória)");
+            boolean eletiva = scanner.nextBoolean();
+            scanner.nextLine();
+
+            Materia materia = new Materia(nome, horas, mencao, eletiva);
             materias.add(materia);
         }
-        Semestre semestre = new Semestre(numero, qtdDeMaterias, materias);
+        Semestre semestre = new Semestre(numero, qtdMaterias, horasTotais, materias);
         semestres.add(semestre);
         salvarSemestresNoArquivo(semestres);
         return semestres;
@@ -212,7 +226,7 @@ public class CalculadorDeIRA {
     private static void salvarSemestresNoArquivo(List<Semestre> semestres) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Semestre semestre : semestres) {
-                writer.write(semestre.getNumero() + '.' + semestre.getQtdDeMaterias() + ".\n");
+                writer.write(semestre.getNumero() + '.' + semestre.getQtdDeMaterias() + '.' + semestre.getHoras() + ".\n");
                 int i = 0;
                 for (Materia materia : semestre.getMaterias()) {
                     i++;
@@ -227,7 +241,7 @@ public class CalculadorDeIRA {
         }
     }
 
-    private static int converteMencao(String mencao) {
+    private static int converterMencao(String mencao) {
         Map<String, Integer> mencaoPesoMap = new HashMap<>();
         mencaoPesoMap.put("SS", 5);
         mencaoPesoMap.put("MS", 4);
@@ -237,4 +251,38 @@ public class CalculadorDeIRA {
         mencaoPesoMap.put("SR", 0);
         return mencaoPesoMap.getOrDefault(mencao, 0);
     }
+
+    /*private static List<Semestre> atualizarSemestres(List<Semestre> semestres, Scanner scanner) {
+        System.out.printf("Qual semestre você quer atualizar?\n");
+        int numeroSemestre = scanner.nextInt();
+        scanner.nextLine();
+        Semestre semestreAtualizado;
+
+        for (Semestre semestre : semestres) {
+            if (semestre.getNumero() == numeroSemestre) {
+                semestreAtualizado = semestre;
+            }
+        }
+        System.out.printf("Qual atributo do %dº semestre você quer atualizar?\n\t%s\n\t%s\n",
+        numeroSemestre,
+        "1. Quantidade de matérias",
+        "2. Número do Semestre");
+        int opcao = scanner.nextInt();
+        scanner.nextLine();
+        switch (opcao) {
+            case 1:
+                System.out.printf("Quantas matérias você fez no %dº semestre?\n", numeroSemestre);
+                int qtdMaterias = scanner.nextInt();
+                scanner.nextLine();
+                
+                semestreAtualizado.setQtdDeMaterias(qtdMaterias);
+                break;
+        
+            default:
+                break;
+        }
+
+
+        return semestres;
+    }*/
 }
