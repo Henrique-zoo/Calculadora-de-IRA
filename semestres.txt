@@ -1,2 +1,16 @@
-1;6;Introducao a Engenharia da Computacao-30-SS,Inteco-60-MS,Calculo 1-90-SS,Fisica 1-60-SS,Fisica 1 Experimental-30-MI,APC-90-SS, Fisica 1 Experimental-30-SS
-2;7;Calculo 2-90-SS,Estrutura de Dados-60-SS,Programacao Competitiva-60-MS,Probabilidade e Estatistica-60-SS,Fisica 2-60-SS,Fisica 2 Experimental-60-SS,Introducao a Algebra Linear-60-SS
+1.6.
+Introducao a Engenharia da Computacao-30-SS-false,
+Introducao a Economia-60-MS-false,
+Calculo 1-90-SS-false,
+Fisica 1-60-SS-false,
+Fisica 1 Experimental-30-MI-false,
+Algoritmos e Programacao de Computadores-90-SS-false,
+Fisica 1 Experimental-30-SS-false;
+2.7.
+Calculo 2-90-SS-false,
+Estrutura de Dados-60-SS-false,
+Programacao Competitiva-60-MS-false,
+Probabilidade e Estatistica-60-SS-false,
+Fisica 2-60-SS-false,
+Fisica 2 Experimental-60-SS-false,
+Introducao a Algebra Linear-60-SS-false
