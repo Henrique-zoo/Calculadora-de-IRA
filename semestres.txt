@@ -1,0 +1,25 @@
+1.6.390.
+Introducao a Engenharia da Computacao-30-SS-false,
+Introducao a Economia-60-MS-false,
+Calculo 1-90-SS-false,
+Fisica 1-60-SS-false,
+Fisica 1 Experimental-30-MI-false,
+Algoritmos e Programacao de Computadores-90-SS-false,
+Fisica 1 Experimental-30-SS-false;
+2.7.450.
+Calculo 2-90-SS-false,
+Estrutura de Dados-60-SS-false,
+Programacao Competitiva-60-MS-false,
+Probabilidade e Estatistica-60-SS-false,
+Fisica 2-60-SS-false,
+Fisica 2 Experimental-60-SS-false,
+Introducao a Algebra Linear-60-SS-false;
+3.8.420.
+ICE-30-SS-false,
+SD-60-SS-false,
+lab SD-30-SS-false,
+LP-60-SS-false,
+TR1-60-SS-false,
+TP1-60-SS-false,
+SSTC-60-SS-false,
+Teoria dos Numeros 1-60-SS-false
